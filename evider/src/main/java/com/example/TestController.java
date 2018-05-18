@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.*;
+
 
 @RestController
 public class TestController {
@@ -193,7 +195,43 @@ public class TestController {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         String output = "";
-
+        
+        
+        
+        
+        // Lägga in endast datum på event i databas?
+        Calendar today = Calendar.getInstance();
+        String sql2 = "SELECT e.venue_id, e.name, e.date FROM events e JOIN venues v ON e.venue_id = v.id";
+        PreparedStatement stmt2 = null;
+        ResultSet rs2 = null;
+        String output2 = "";
+              
+        try {
+            stmt2 = cxn.prepareStatement(sql2);
+            rs2 = stmt.executeQuery();
+            while (rs2.next()) {
+               String venue = rs2.getString("v_name");
+               String eventName = rs2.getString("e.name");
+               String eventDate = rs2.getString("e.date");
+               String todayDate = today.toString();
+               if(eventDate.equals(todayDate)){
+                output += "Today " + eventDate + " " + eventName + " plays at " + venue;
+            }
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            return "{\"error\" : \"error in sql\"}";
+        }
+        db.disconnect();
+        
+        
+        
+        
+        
+        
+        
+        
+        
         try {
             stmt = cxn.prepareStatement(sql);
             rs = stmt.executeQuery();
